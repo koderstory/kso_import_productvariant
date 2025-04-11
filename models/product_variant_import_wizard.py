@@ -2,8 +2,8 @@
 """
 This module defines the Product Variant Import Wizard.
 It provides a wizard form where the user can upload an Excel file
-containing product and variant data, which is then processed to
-create or update product templates and their variants.
+containing product and variant data, and includes a button to download
+a sample template file.
 """
 
 import base64
@@ -26,6 +26,7 @@ class ProductVariantImportWizard(models.TransientModel):
     
     This wizard lets the user select an Excel file, which is then processed
     to update or create product templates and their associated variants.
+    It also includes functionality to download a sample/template file.
     """
     _name = "kso.import.productvariant.wizard"
     _description = "Product Variant Import Wizard"
@@ -53,34 +54,46 @@ class ProductVariantImportWizard(models.TransientModel):
             raise UserError(_("Please provide a file to import."))
 
         try:
-            # Decode Base64 file data into bytes.
             file_data = base64.b64decode(self.file)
         except Exception:
             raise UserError(_("The file could not be decoded. Please try again."))
 
         try:
-            # Load the Excel workbook from a binary stream.
             workbook = openpyxl.load_workbook(io.BytesIO(file_data))
             sheet = workbook.active
         except Exception as e:
             raise UserError(_("Error reading Excel file: %s") % str(e))
 
-        # Convert the first row into header values, ensuring lowercase and trimmed strings.
         headers = [str(cell.value).strip().lower() if cell.value else '' for cell in sheet[1]]
         product_data = []
-        
-        # Read each row (starting from the second) and create a dictionary using headers as keys.
         for row in sheet.iter_rows(min_row=2, values_only=True):
             product = dict(zip(headers, row))
             product_data.append(product)
 
         _logger.info("Product import data: %s", product_data)
 
-        # Process the product data (and variants) using the helper function.
         try:
             add_or_update_product_with_variants(self.env, product_data)
         except Exception as e:
             raise UserError(_("Import failed: %s") % e)
 
-        # Close the wizard on completion.
         return {'type': 'ir.actions.act_window_close'}
+
+    def action_download_template(self):
+        """
+        Provide a download link for the sample product variant Excel template.
+        
+        This method returns an action that directs the user to the URL of
+        the static template file. Ensure the file is located at:
+            static/description/PRODUCTS_VARIANTS.xlsx
+        
+        :return: An action of type 'ir.actions.act_url' to download the template.
+        """
+        # Retrieve the base URL configured in Odoo.
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return {
+            'type': 'ir.actions.act_url',
+            # Concatenate the base URL with your relative static file path.
+            'url': base_url + '/kso_import_productvariant/static/description/PRODUCTS_VARIANTS.xlsx?download=true',
+            'target': 'self',
+        }
