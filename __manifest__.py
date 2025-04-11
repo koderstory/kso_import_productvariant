@@ -14,7 +14,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
-    #     'views/category_import_wizard_view.xml',
+        'views/import_product_variant.xml',
     ],
     # 'images': ['static/description/banner.png'],
     'license': 'OPL-1',

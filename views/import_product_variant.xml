@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Action to launch the product variant import wizard -->
+    <record id="import_productvariant_action" model="ir.actions.act_window">
+        <field name="name">Product Variant</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">kso.import.productvariant.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Form view for the product variant import wizard -->
+    <record id="import_productvariant_view_form" model="ir.ui.view">
+        <field name="name">kso.import.productvariant.wizard.form</field>
+        <field name="model">kso.import.productvariant.wizard</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Import Product Variant">
+                <sheet>
+                    <group>
+                        <field name="file" widget="binary" filename="filename"/>
+                        <field name="filename"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Import" type="object"
+                            name="action_import_productvariant" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu item to access the product variant import wizard -->
+    <menuitem id="import_productvariant_menu_action"
+              name="Import Product Variant"
+              parent="stock.menu_stock_inventory_control"
+              action="import_productvariant_action"
+              groups="kso_import_productvariant.productvariant_import_access_group"
+              sequence="1001"/>
+</odoo>
