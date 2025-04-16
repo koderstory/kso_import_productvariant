@@ -10,7 +10,7 @@
     'company': 'Koderstory',
     'maintainer': 'Koderstory',
     'website': 'https://koderstory.com',
-    'depends': ['product'],
+    'depends': ['base',],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
