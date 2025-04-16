@@ -10,7 +10,7 @@
     'company': 'Koderstory',
     'maintainer': 'Koderstory',
     'website': 'https://koderstory.com',
-    'depends': ['base',],
+    'depends': ['base', 'stock'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
@@ -19,6 +19,6 @@
     # 'images': ['static/description/banner.png'],
     'license': 'OPL-1',
     'installable': True,
-    'auto_install': False,
+    'auto_install': True,
     'application': False,
 }
